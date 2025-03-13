@@ -12,7 +12,7 @@ export const createContact = (payload) => {
 export const updateContact = (contactId, payload) => {
   return contactsCollection.findByIdAndUpdate(contactId, payload, {
     new: true,
-  }); // чи буде повернуто оновлений документ //
+  });
 };
 
 export const deleteContact = (contactId) => {
