@@ -2,7 +2,7 @@ import { contactsCollection } from '../db/models/contact.js';
 
 export const getAllContacts = () => contactsCollection.find();
 
-export const getContactsById = (contactId) =>
+export const getContactById = (contactId) =>
   contactsCollection.findById(contactId);
 
 export const createContact = (payload) => {
