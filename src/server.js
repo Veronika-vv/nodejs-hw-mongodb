@@ -4,7 +4,7 @@ import cors from 'cors';
 import pino from 'pino-http';
 import { getEnvVar } from './utils/getEnvVar.js';
 import contactsRouter from './routers/contacts.js';
-import createError from 'http-errors';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -31,9 +31,7 @@ export function setupServer() {
 
   app.use(contactsRouter);
 
-  app.use('*', (req, res, next) => {
-    next(createError(404, 'Not found'));
-  });
+  app.use('*', notFoundHandler);
 
   app.use(errorHandler);
 
