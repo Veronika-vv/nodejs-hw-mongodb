@@ -4,7 +4,7 @@ import cors from 'cors';
 import pino from 'pino-http';
 import { getEnvVar } from './utils/getEnvVar.js';
 import contactsRouter from './routers/contacts.js';
-import createError from 'http-errors';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -13,10 +13,6 @@ const PORT = Number(getEnvVar('PORT', '3000'));
 
 export function setupServer() {
   const app = express();
-
-  app.get('/favicon.ico', (req, res) => {
-    res.status(204).end();
-  });
 
   app.use(cors());
   app.use(express.json());
@@ -29,11 +25,9 @@ export function setupServer() {
     }),
   );
 
-  app.use(contactsRouter);
+  app.use('/contacts', contactsRouter);
 
-  app.use('*', (req, res, next) => {
-    next(createError(404, 'Not found'));
-  });
+  app.use('*', notFoundHandler);
 
   app.use(errorHandler);
 
