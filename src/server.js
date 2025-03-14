@@ -14,10 +14,6 @@ const PORT = Number(getEnvVar('PORT', '3000'));
 export function setupServer() {
   const app = express();
 
-  app.get('/favicon.ico', (req, res) => {
-    res.status(204).end();
-  });
-
   app.use(cors());
   app.use(express.json());
 
@@ -29,7 +25,7 @@ export function setupServer() {
     }),
   );
 
-  app.use(contactsRouter);
+  app.use('/contacts', contactsRouter);
 
   app.use('*', notFoundHandler);
 
