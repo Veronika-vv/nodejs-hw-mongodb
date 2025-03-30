@@ -26,7 +26,7 @@ export const getAllContacts = async ({
     contactsQuery
       .skip(skip)
       .limit(limit)
-      .sort({ [sortOrder]: sortBy })
+      .sort({ [sortBy]: sortOrder === SORT_ORDER.ASC ? 1 : -1 })
       .exec(),
   ]);
 
