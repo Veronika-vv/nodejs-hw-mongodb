@@ -14,7 +14,6 @@ const parseSortBy = (sortBy) => {
     'phoneNumber',
     'email',
     'contactType',
-    'isFavourite',
     'createdAt',
     'updatedAt',
   ];
