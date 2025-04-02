@@ -13,6 +13,7 @@ import {
   updateContactSchema,
 } from '../validation/contacts.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = express.Router();
 
@@ -34,5 +35,9 @@ router.patch(
 );
 
 router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
+
+router.use(authenticate);
+
+router.get('/', ctrlWrapper(getContactsController));
 
 export default router;
