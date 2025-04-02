@@ -3,20 +3,21 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import pino from 'pino-http';
 import { getEnvVar } from './utils/getEnvVar.js';
-import contactsRouter from './routers/contacts.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import router from './routers/index.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
-export function setupServer() {
+export const setupServer = () => {
   const app = express();
 
   app.use(cors());
   app.use(express.json());
-
+  app.use(cookieParser());
   app.use(
     pino({
       transport: {
@@ -25,7 +26,7 @@ export function setupServer() {
     }),
   );
 
-  app.use('/contacts', contactsRouter);
+  app.use(router);
 
   app.use('*', notFoundHandler);
 
@@ -34,4 +35,4 @@ export function setupServer() {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
-}
+};
