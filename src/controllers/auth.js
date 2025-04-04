@@ -1,17 +1,27 @@
-import { registerUser } from '../services/auth.js';
-import { loginUser } from '../services/auth.js';
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshUsersSession,
+} from '../services/auth.js';
 import { ONE_DAY } from '../constants/index.js';
-import { logoutUser } from '../services/auth.js';
-import { refreshUsersSession } from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
-  const user = await registerUser(req.body);
+  try {
+    const user = await registerUser(req.body);
 
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully registered a user!',
-    data: user,
-  });
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully registered a user!',
+      data: user,
+    });
+  } catch (error) {
+    if (error.status === 409) {
+      res.status(409).json({ message: 'Email in use' });
+    } else {
+      res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
 };
 
 export const loginUserController = async (req, res) => {
@@ -36,8 +46,10 @@ export const loginUserController = async (req, res) => {
 };
 
 export const logoutUserController = async (req, res) => {
-  if (req.cookies.sessionId) {
-    await logoutUser(req.cookies.sessionId);
+  const sessionId = req.cookies.sessionId;
+
+  if (sessionId) {
+    await logoutUser(sessionId);
   }
 
   res.clearCookie('sessionId');
@@ -58,18 +70,22 @@ const setupSession = (res, session) => {
 };
 
 export const refreshUserSessionController = async (req, res) => {
-  const session = await refreshUsersSession({
-    sessionId: req.cookies.sessionId,
-    refreshToken: req.cookies.refreshToken,
-  });
+  try {
+    const session = await refreshUsersSession({
+      sessionId: req.cookies.sessionId,
+      refreshToken: req.cookies.refreshToken,
+    });
 
-  setupSession(res, session);
+    setupSession(res, session);
 
-  res.json({
-    status: 200,
-    message: 'Successfully refreshed a session!',
-    data: {
-      accessToken: session.accessToken,
-    },
-  });
+    res.json({
+      status: 200,
+      message: 'Successfully refreshed a session!',
+      data: {
+        accessToken: session.accessToken,
+      },
+    });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
+  }
 };
